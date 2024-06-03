@@ -1,0 +1,259 @@
+
+imports
+___________________________________________________________________________________________
+
+import java.util.Set;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+
+import com.app.baseone.security.domain.entity.PermissionEntity;
+import com.app.baseone.security.domain.entity.RoleEntity;
+import com.app.baseone.security.domain.entity.UserBasicAuthEntity;
+import com.app.baseone.security.persistence.repository.IUserBasicAuthRepository;
+import com.app.baseone.users.domain.entity.UserEntity;
+import com.app.baseone.users.persistence.repository.IUserRepository;
+import com.app.baseone.utilities.enums.DocTypeEnum;
+import com.app.baseone.utilities.enums.GenderEnum;
+import com.app.baseone.utilities.enums.RoleEnum;
+import com.app.baseone.utilities.enums.StateEnum;
+
+
+___________________________________________________________________________________________
+
+
+@Bean
+	CommandLineRunner init(IUserRepository userRepository, IUserBasicAuthRepository userBasicAuthRepository) {
+
+		return args -> {
+
+			// System.out.println("Hello World");
+
+			// TODO: Permisos
+
+			PermissionEntity crearPermission = PermissionEntity.builder()
+					.name("CREAR")
+					.build();
+
+			PermissionEntity leerPermission = PermissionEntity.builder()
+					.name("LEER")
+					.build();
+
+			PermissionEntity actualizarPermission = PermissionEntity.builder()
+					.name("ACTUALIZAR")
+					.build();
+
+			PermissionEntity borrarPermission = PermissionEntity.builder()
+					.name("BORRAR")
+					.build();
+
+			PermissionEntity modificarPermission = PermissionEntity.builder()
+					.name("MODIFICAR")
+					.build();
+			PermissionEntity evaluarPermission = PermissionEntity.builder()
+					.name("EVALUAR")
+					.build();
+			PermissionEntity administrarPermission = PermissionEntity.builder()
+					.name("ADMINISTAR")
+					.build();
+			PermissionEntity pagarPermission = PermissionEntity.builder()
+					.name("PAGAR")
+					.build();
+			PermissionEntity realizarPermission = PermissionEntity.builder()
+					.name("REALIZAR")
+					.build();
+			PermissionEntity desarrollarPermission = PermissionEntity.builder()
+					.name("DESAROLLAR")
+					.build();
+
+			// TODO: Roles
+
+			RoleEntity rolAdministrador = RoleEntity.builder()
+					.name(RoleEnum.ADMINISTRADOR)
+					.permissionList(Set.of(crearPermission, administrarPermission, leerPermission, modificarPermission,
+							actualizarPermission, borrarPermission))
+					.build();
+
+			RoleEntity rolProfesor = RoleEntity.builder()
+					.name(RoleEnum.PROFESOR)
+					.permissionList(Set.of(evaluarPermission, leerPermission, actualizarPermission, borrarPermission))
+					.build();
+
+			RoleEntity rolAlumno = RoleEntity.builder()
+					.name(RoleEnum.ALUMNO)
+					.permissionList(Set.of(realizarPermission, leerPermission, actualizarPermission))
+					.build();
+
+			RoleEntity rolAcudiente = RoleEntity.builder()
+					.name(RoleEnum.ACUDIENTE)
+					.permissionList(Set.of(pagarPermission, leerPermission, actualizarPermission))
+					.build();
+
+			RoleEntity rolDesarrollador = RoleEntity.builder()
+					.name(RoleEnum.DESARROLLADOR)
+					.permissionList(
+							Set.of(crearPermission, desarrollarPermission, administrarPermission, evaluarPermission,
+									pagarPermission,
+									leerPermission, modificarPermission, actualizarPermission, borrarPermission))
+					.build();
+
+			// TODO: date formatter
+			String strDate = "2024-05-24"; // String representation of date
+			DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE; // ISO-8601 date format
+
+			// Parse the String into a LocalDate object
+			LocalDate localDate = LocalDate.parse(strDate, formatter);
+
+			// TODO: developer
+
+			UserEntity userManuel = new UserEntity();
+			userManuel.setName("manuel");
+			userManuel.setSurname("vela");
+			userManuel.setDocType(DocTypeEnum.CEDULA_CIUDADANIA);
+			userManuel.setDocNumber("12345678");
+			userManuel.setBirthDate(localDate);
+			userManuel.setEmail("email@gmail.com");
+			userManuel.setPhone("3452345235");
+			userManuel.setGender(GenderEnum.MASCULINO);
+			userManuel.setProfileImage("urldelaImagen");
+			userManuel.setNickname("kaos");
+			userManuel.setState(StateEnum.ACTIVO);
+
+			UserBasicAuthEntity userAuthManuel = new UserBasicAuthEntity();
+			userAuthManuel.setUsername("manuel");
+			userAuthManuel.setPassword("1234");
+			userAuthManuel.setEnabled(true);
+			userAuthManuel.setAccountNoExpired(true);
+			userAuthManuel.setAccountNoLocked(true);
+			userAuthManuel.setCredentialNoExpired(true);
+			userAuthManuel.setRoles(Set.of(rolDesarrollador, rolAdministrador));
+
+			userManuel.setUserAuth(userAuthManuel);
+			userAuthManuel.setUser(userManuel);
+			// userRepository.save(userManuel);
+
+			// // TODO: profesor
+
+			UserEntity userFernando = new UserEntity();
+			userFernando.setName("fernando");
+			userFernando.setSurname("osorio");
+			userFernando.setDocType(DocTypeEnum.TARJETA_IDENTIDAD);
+			userFernando.setDocNumber("34563456");
+			userFernando.setBirthDate(localDate);
+			userFernando.setEmail("emailfernando@gmail.com");
+			userFernando.setPhone("76856788");
+			userFernando.setGender(GenderEnum.MASCULINO);
+			userFernando.setProfileImage("urldelaImagen");
+			userFernando.setNickname("fercho");
+			userFernando.setState(StateEnum.ACTIVO);
+
+			UserBasicAuthEntity userAuthFernando = new UserBasicAuthEntity();
+			userAuthFernando.setUsername("fernando");
+			userAuthFernando.setPassword("1234");
+			userAuthFernando.setEnabled(true);
+			userAuthFernando.setAccountNoExpired(true);
+			userAuthFernando.setAccountNoLocked(true);
+			userAuthFernando.setCredentialNoExpired(true);
+			userAuthFernando.setRoles(Set.of(rolDesarrollador, rolProfesor));
+
+			userFernando.setUserAuth(userAuthFernando);
+			userAuthFernando.setUser(userFernando);
+			// userRepository.save(userFernando);
+
+			// // TODO: Alumno
+
+			UserEntity userGeraldine = new UserEntity();
+			userGeraldine.setName("geraldine");
+			userGeraldine.setSurname("leyton");
+			userGeraldine.setDocType(DocTypeEnum.PASAPORTE);
+			userGeraldine.setDocNumber("768568789679");
+			userGeraldine.setBirthDate(localDate);
+			userGeraldine.setEmail("gerald@gmail.com");
+			userGeraldine.setPhone("12341244");
+			userGeraldine.setGender(GenderEnum.FEMENINO);
+			userGeraldine.setProfileImage("urldelaImagen");
+			userGeraldine.setNickname("geraldine");
+			userGeraldine.setState(StateEnum.ACTIVO);
+
+			UserBasicAuthEntity userAuthGeraldine = new UserBasicAuthEntity();
+			userAuthGeraldine.setUsername("geraldine");
+			userAuthGeraldine.setPassword("1234");
+			userAuthGeraldine.setEnabled(true);
+			userAuthGeraldine.setAccountNoExpired(true);
+			userAuthGeraldine.setAccountNoLocked(true);
+			userAuthGeraldine.setCredentialNoExpired(true);
+			userAuthGeraldine.setRoles(Set.of(rolAlumno));
+
+			userGeraldine.setUserAuth(userAuthGeraldine);
+			userAuthGeraldine.setUser(userGeraldine);
+			// userRepository.save(userGeraldine);
+
+			// // TODO: Acudiente
+
+			UserEntity userAlejandra = new UserEntity();
+			userAlejandra.setName("alejandra");
+			userAlejandra.setSurname("rojas");
+			userAlejandra.setDocType(DocTypeEnum.CEDULA_EXTRANJERA);
+			userAlejandra.setDocNumber("12345678");
+			userAlejandra.setBirthDate(localDate);
+			userAlejandra.setEmail("aleRojas@gmail.com");
+			userAlejandra.setPhone("3452345235");
+			userAlejandra.setGender(GenderEnum.FEMENINO);
+			userAlejandra.setProfileImage("urldelaImagen");
+			userAlejandra.setNickname("ale");
+			userAlejandra.setState(StateEnum.ACTIVO);
+
+            UserBasicAuthEntity userAuthAlejandra = new UserBasicAuthEntity();
+			userAuthAlejandra.setUsername("alejandra");
+			userAuthAlejandra.setPassword("1234");
+			userAuthAlejandra.setEnabled(true);
+			userAuthAlejandra.setAccountNoExpired(true);
+			userAuthAlejandra.setAccountNoLocked(true);
+			userAuthAlejandra.setCredentialNoExpired(true);
+			userAuthAlejandra.setRoles(Set.of(rolAcudiente));
+
+			userAlejandra.setUserAuth(userAuthAlejandra);
+			userAuthAlejandra.setUser(userAlejandra);
+			// userRepository.save(userAlejandra);
+
+			userRepository.saveAll(Set.of(userManuel, userFernando, userGeraldine,userAlejandra));
+			
+			
+
+			// // TODO: Anterior 
+
+			// UserEntity userEliana = UserEntity.builder()
+			// .name("eliana")
+			// .surname("perez")
+			// .docType(DocTypeEnum.CEDULA_CIUDADANIA)
+			// .docNumber("547457")
+			// .birthDate(localDate)
+			// .email("email@gmail.com")
+			// .phone("2435234")
+			// .gender(GenderEnum.FEMENINO)
+			// .profileImage("urldelaImagen")
+			// .nickname("eli")
+			// .state(StateEnum.ACTIVO)
+			// .build();
+
+			// UserBasicAuthEntity userAuthEliana = UserBasicAuthEntity.builder()
+			// .username("eliana")
+			// .password("1234")
+			// .isEnabled(true)
+			// .AccountNoExpired(true)
+			// .AccountNoLocked(true)
+			// .CredentialNoExpired(true)
+			// .roles(Set.of(rolDesarrollador, rolAdministrador))
+			// .user(userEliana)
+			// .build();
+
+			// userRepository.saveAll(Set.of(userManuel, userFernando, userGeraldine,
+			// userAlejandra, userEliana));
+			// userBasicAuthRepository.saveAll(Set.of(userAuthManuel, userAuthFernando,
+			// userAuthGeraldine,userAuthAlejandra,userAuthEliana));
+		};
+	}
