@@ -10,12 +10,15 @@ import org.springframework.stereotype.Service;
 
 import com.app.baseone.security.business.service.interfaces.IUserBasicAuthService;
 import com.app.baseone.security.domain.entity.PermissionEntity;
+import com.app.baseone.security.domain.entity.RoleEntity;
 import com.app.baseone.security.domain.entity.UserBasicAuthEntity;
 import com.app.baseone.security.persistence.repository.IPermissionRepository;
 import com.app.baseone.security.persistence.repository.IRoleRepository;
 import com.app.baseone.security.persistence.repository.IUserBasicAuthRepository;
 import com.app.baseone.security.presentation.dto.LoginRequestDTO;
 import com.app.baseone.security.presentation.dto.PermissionInfoDTO;
+import com.app.baseone.security.presentation.dto.RoleInfoDTO;
+import com.app.baseone.utilities.enums.RoleEnum;
 import com.app.baseone.utilities.enums.StateEnum;
 
 @Service
@@ -45,7 +48,7 @@ public class UserBasicAuthServiceImpl implements IUserBasicAuthService {
 
             if (userEntity.get().getPassword().equals(password)) {
 
-                ModelMapper modelMapper = new ModelMapper();
+                
 
             }
 
@@ -54,6 +57,8 @@ public class UserBasicAuthServiceImpl implements IUserBasicAuthService {
         return null;
 
     }
+
+    // TODO: PERMISOS
 
     @Override
     public List<PermissionInfoDTO> verPermissionInfo() {
@@ -109,6 +114,61 @@ public class UserBasicAuthServiceImpl implements IUserBasicAuthService {
                 .map(entity -> modelMapper.map(entity, PermissionInfoDTO.class))
                 .collect(Collectors.toList());
 
+    }
+
+    // TODO: ROLES
+
+    @Override
+    public List<RoleInfoDTO> verRoleInfo() {
+
+        ModelMapper modelMapper = new ModelMapper();
+        return this.roleRepository.findAll()
+                .stream()
+                .map(entity -> modelMapper.map(entity, RoleInfoDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public RoleInfoDTO verRoleInfoById(Long id) {
+
+        Optional<RoleEntity> roleEntity = this.roleRepository.findById(id);
+
+        if (roleEntity.isPresent()) {
+            ModelMapper modelMapper = new ModelMapper();
+
+            RoleEntity currentRoleEntity = roleEntity.get();
+
+            return modelMapper.map(currentRoleEntity, RoleInfoDTO.class);
+
+        } else {
+
+            return new RoleInfoDTO();
+
+        }
+    }
+
+    @Override
+    public List<RoleInfoDTO> findByRoleNameContaining(RoleEnum role) {
+
+        ModelMapper modelMapper = new ModelMapper();
+
+        return this.roleRepository.findByNameContaining(role)
+                .stream()
+                // .filter(permission -> permission.getName().contains(name))
+                .map(entity -> modelMapper.map(entity, RoleInfoDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<RoleInfoDTO> findByState(StateEnum state) {
+
+        ModelMapper modelMapper = new ModelMapper();
+
+        return this.roleRepository.findByState(state)
+                .stream()
+                // .filter(permission -> permission.getName().contains(name))
+                .map(entity -> modelMapper.map(entity, RoleInfoDTO.class))
+                .collect(Collectors.toList());
     }
 
 }

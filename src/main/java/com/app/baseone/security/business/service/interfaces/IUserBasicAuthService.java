@@ -6,11 +6,13 @@ import org.springframework.stereotype.Service;
 
 import com.app.baseone.security.presentation.dto.LoginRequestDTO;
 import com.app.baseone.security.presentation.dto.PermissionInfoDTO;
+import com.app.baseone.security.presentation.dto.RoleInfoDTO;
+import com.app.baseone.utilities.enums.RoleEnum;
 import com.app.baseone.utilities.enums.StateEnum;
 
 @Service
 public interface IUserBasicAuthService {
-    
+
     LoginRequestDTO authenticateUser(LoginRequestDTO loginRequestDTO);
 
     // permission
@@ -22,5 +24,15 @@ public interface IUserBasicAuthService {
     List<PermissionInfoDTO> verPermissionInfoByName(String name);
 
     List<PermissionInfoDTO> verPermissionInfoByState(StateEnum state);
+
+    // Roles
+
+    List<RoleInfoDTO> verRoleInfo();
+
+    RoleInfoDTO verRoleInfoById(Long id);
+
+    List<RoleInfoDTO> findByRoleNameContaining(RoleEnum role);
+
+    List<RoleInfoDTO> findByState(StateEnum state);
 
 }
