@@ -5,6 +5,11 @@ import java.util.Collections;
 import java.util.List;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.app.baseone.security.business.service.interfaces.IUserBasicAuthService;
+import com.app.baseone.security.presentation.dto.LoginRequestDTO;
+import com.app.baseone.security.presentation.dto.PermissionInfoDTO;
+import com.app.baseone.utilities.enums.StateEnum;
+
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,17 +31,68 @@ import org.springframework.web.bind.annotation.RequestParam;
 @PreAuthorize("denyAll()")
 public class UserBasicAuthController {
 
-    
-    @GetMapping("/funciona")
-    @PreAuthorize("permitAll()")
-    public String funciona() {
-        return "funciona";
+    @Autowired
+    private IUserBasicAuthService userBasicAuthService;
+    // fauth
+    // @GetMapping("/info")
+    // @PreAuthorize("hasAuthority('LEER')")
+    // public ResponseEntity<LoginRequestDTO> authenticateUser(@RequestBody
+    // LoginRequestDTO loginRequestDTO) {
+
+    // return new
+    // ResponseEntity<>(this.userBasicAuthService.authenticateUser(loginRequestDTO),
+    // HttpStatus.OK);
+
+    // }
+
+        //TODO: REQUEST
+    // find all permisos info
+
+    @GetMapping("/info")
+    @PreAuthorize("hasAuthority('LEER')")
+    public ResponseEntity<List<PermissionInfoDTO>> verPermissionInfo() {
+
+        return new ResponseEntity<>(this.userBasicAuthService.verPermissionInfo(), HttpStatus.OK);
+
     }
-    
-    @GetMapping("/seguridad")
-    @PreAuthorize("hasAuthority('CREAR')")
-    public String seguridad() {
-        return "seguridad";
+
+    // find all permisos info by id
+    @GetMapping("/verId/{id}")
+    @PreAuthorize("hasAuthority('LEER')")
+    public ResponseEntity<PermissionInfoDTO> verPermissionInfoById(@PathVariable Long id) {
+
+        return new ResponseEntity<>(this.userBasicAuthService.verPermissionInfoById(id), HttpStatus.OK);
+
+    }
+
+    // find all permisos info by name containing
+    @GetMapping("/verNombre/{name}")
+    @PreAuthorize("hasAuthority('LEER')")
+    public ResponseEntity<List<PermissionInfoDTO>> verPermissionInfoByName(@PathVariable String name) {
+
+        return new ResponseEntity<>(this.userBasicAuthService.verPermissionInfoByName(name), HttpStatus.OK);
+
+    }
+
+    // find all permisos info by name containing
+    @GetMapping("/verEstado/{state}")
+    @PreAuthorize("hasAuthority('LEER')")
+    public ResponseEntity<List<PermissionInfoDTO>> verPermissionInfoByState(@PathVariable String state) {
+
+        StateEnum[] states = StateEnum.values();
+        for (StateEnum state1 : states) {
+            if (state1.name().equals(state)) {
+
+                StateEnum stateEnum = StateEnum.valueOf(state);
+
+                return new ResponseEntity<>(this.userBasicAuthService.verPermissionInfoByState(stateEnum),
+                        HttpStatus.OK);
+
+            }
+        }
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
     }
 
 }
