@@ -9,6 +9,8 @@ import com.app.baseone.security.presentation.dto.PermissionInfoDTO;
 import com.app.baseone.users.business.service.interfaces.IUserRequestService;
 import com.app.baseone.users.business.service.interfaces.IUserService;
 import com.app.baseone.users.presentation.dto.SaveUserDTO;
+import com.app.baseone.users.presentation.dto.SaveUserRequestDTO;
+import com.app.baseone.users.presentation.dto.UpdateUserDTO;
 import com.app.baseone.users.presentation.dto.UserInfoDTO;
 import com.app.baseone.utilities.enums.DocTypeEnum;
 import com.app.baseone.utilities.enums.GenderEnum;
@@ -182,24 +184,25 @@ public class UserController {
     // create user
     @PostMapping("/crear")
     @PreAuthorize("hasAuthority('CREAR')")
-    public ResponseEntity<SaveUserDTO> save(@RequestBody SaveUserDTO saveUserDTO) {
+    public ResponseEntity<SaveUserRequestDTO> save(@RequestBody SaveUserDTO saveUserDTO) {
 
         return new ResponseEntity<>(this.userService.saveUser(saveUserDTO), HttpStatus.CREATED);
 
     }
 
-    // @PutMapping("/actualizar/{id}")
-    // @PreAuthorize("hasAuthority('UPDATE')")
-    // public ResponseEntity<UserDTO> update(@RequestBody UserDTO userDTO, @PathVariable Long id) {
+    @PutMapping("/actualizar/{id}")
+    @PreAuthorize("hasAuthority('ACTUALIZAR')")
+    public ResponseEntity<String> update(@RequestBody UpdateUserDTO updateUserDTO, @PathVariable Long id) {
 
-    //     return new ResponseEntity<>(this.userService.update(id, userDTO), HttpStatus.OK);
+        return new ResponseEntity<>(this.userService.updateUser(id, updateUserDTO), HttpStatus.OK);
 
-    // }
+    }
 
     // @DeleteMapping("/borrar/{id}")
     // @PreAuthorize("hasAuthority('DELETE')")
     // public ResponseEntity<String> delete(@PathVariable Long id) {
-    //     return new ResponseEntity<>(this.userService.delete(id), HttpStatus.NO_CONTENT);
+    // return new ResponseEntity<>(this.userService.delete(id),
+    // HttpStatus.NO_CONTENT);
     // }
 
 }

@@ -8,15 +8,19 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.app.baseone.security.domain.entity.PermissionEntity;
 import com.app.baseone.security.domain.entity.RoleEntity;
 import com.app.baseone.security.domain.entity.UserBasicAuthEntity;
 import com.app.baseone.security.persistence.repository.IRoleRepository;
 import com.app.baseone.security.persistence.repository.IUserBasicAuthRepository;
+import com.app.baseone.security.presentation.dto.PermissionInfoDTO;
 import com.app.baseone.users.business.service.interfaces.IUserRequestService;
 import com.app.baseone.users.business.service.interfaces.IUserService;
 import com.app.baseone.users.domain.entity.UserEntity;
 import com.app.baseone.users.persistence.repository.IUserRepository;
 import com.app.baseone.users.presentation.dto.SaveUserDTO;
+import com.app.baseone.users.presentation.dto.SaveUserRequestDTO;
+import com.app.baseone.users.presentation.dto.UpdateUserDTO;
 import com.app.baseone.users.presentation.dto.UserInfoDTO;
 import com.app.baseone.utilities.enums.DocTypeEnum;
 import com.app.baseone.utilities.enums.GenderEnum;
@@ -39,7 +43,7 @@ public class UserServiceImpl implements IUserService {
     private IUserRepository userRepository;
 
     @Autowired
-    private  IUserBasicAuthRepository userBasicAuthRepository;
+    private IUserBasicAuthRepository userBasicAuthRepository;
 
     @Autowired
     private IRoleRepository roleRepository;
@@ -47,29 +51,30 @@ public class UserServiceImpl implements IUserService {
     ModelMapper modelMapper = new ModelMapper();
 
     @Override
-    public SaveUserDTO saveUser(SaveUserDTO saveUserDTO) {
-        
+    public SaveUserRequestDTO saveUser(SaveUserDTO saveUserDTO) {
+
         try {
 
             // TODO: date formatter
-			// String strDate = "2024-05-24"; // String representation of date
-			// DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE; // ISO-8601 date format
+            // String strDate = "2024-05-24"; // String representation of date
+            // DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE; // ISO-8601 date
+            // format
 
-			// // Parse the String into a LocalDate object
-			// LocalDate localDate = LocalDate.parse(strDate, formatter);
-             String strDate = saveUserDTO.getBirthDate();
-             DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE;
-             LocalDate localDate = LocalDate.parse(strDate, formatter);
+            // // Parse the String into a LocalDate object
+            // LocalDate localDate = LocalDate.parse(strDate, formatter);
+
+            String strDate = saveUserDTO.getBirthDate();
+            DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE;
+            LocalDate localDate = LocalDate.parse(strDate, formatter);
 
             UserEntity savedUser = new UserEntity();
             UserBasicAuthEntity savedUserAuth = new UserBasicAuthEntity();
-            
+
             String rol = saveUserDTO.getRol();
             List<RoleEntity> roles = roleRepository.findByNameContaining(RoleEnum.valueOf(rol));
 
             Set<RoleEntity> rolesSet = new HashSet<>();
             rolesSet.addAll(roles);
-            
 
             savedUser.setName(saveUserDTO.getName());
             savedUser.setSurname(saveUserDTO.getSurname());
@@ -94,40 +99,14 @@ public class UserServiceImpl implements IUserService {
             savedUserAuth.setUser(savedUser);
             userRepository.save(savedUser);
 
+            SaveUserRequestDTO responseDTO = new SaveUserRequestDTO();
+            responseDTO.setName(savedUser.getName());
+            responseDTO.setSurname(savedUser.getSurname());
+            responseDTO.setRol(rol);
 
+            modelMapper.map(responseDTO, SaveUserDTO.class);
 
-
-            // UserEntity userManuel = new UserEntity();
-			// userManuel.setName("manuel");
-			// userManuel.setSurname("vela");
-			// userManuel.setDocType(DocTypeEnum.CEDULA_CIUDADANIA);
-			// userManuel.setDocNumber("12345678");
-			// userManuel.setBirthDate(localDate);
-			// userManuel.setEmail("email@gmail.com");
-			// userManuel.setPhone("3452345235");
-			// userManuel.setGender(GenderEnum.MASCULINO);
-			// userManuel.setProfileImage("urldelaImagen");
-			// userManuel.setNickname("kaos");
-			// userManuel.setState(StateEnum.ACTIVO);
-
-			// UserBasicAuthEntity userAuthManuel = new UserBasicAuthEntity();
-			// userAuthManuel.setUsername("manuel");
-			// userAuthManuel.setPassword("1234");
-			// userAuthManuel.setEnabled(true);
-			// userAuthManuel.setAccountNoExpired(true);
-			// userAuthManuel.setAccountNoLocked(true);
-			// userAuthManuel.setCredentialNoExpired(true);
-			// // userAuthManuel.setRoles(Set.of(rolDesarrollador, rolAdministrador));
-
-			// userManuel.setUserAuth(userAuthManuel);
-			// userAuthManuel.setUser(userManuel);
-			// // userRepository.save(userManuel);
-
-           
-        
-            
-
-            return saveUserDTO;
+            return responseDTO;
 
         } catch (Exception e) {
 
@@ -136,19 +115,71 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public SaveUserDTO updateUser(Long id, SaveUserDTO SaveUserDTO) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateUser'");
+    public String updateUser(Long id, UpdateUserDTO updateUserDTO) {
+
+        Optional<UserEntity> updateUserEntity = userRepository.findById(id);
+
+        if (updateUserEntity.isPresent()) {
+
+            String strDate = updateUserDTO.getBirthDate();
+            DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE;
+            LocalDate localDate = LocalDate.parse(strDate, formatter);
+
+            UserEntity updatedUser = updateUserEntity.get();
+            Optional<UserBasicAuthEntity> savedUserAuth = userBasicAuthRepository.findById(id);
+
+            updatedUser.setName(updateUserDTO.getName());
+            updatedUser.setSurname(updateUserDTO.getSurname());
+            updatedUser.setDocType(DocTypeEnum.valueOf(updateUserDTO.getDocType().name()));
+            updatedUser.setDocNumber(updateUserDTO.getDocNumber());
+            updatedUser.setBirthDate(localDate);
+            updatedUser.setEmail(updateUserDTO.getEmail());
+            updatedUser.setPhone(updateUserDTO.getPhone());
+            updatedUser.setGender(GenderEnum.valueOf(updateUserDTO.getGender().name()));
+            updatedUser.setProfileImage(updateUserDTO.getProfileImage());
+            updatedUser.setNickname(updateUserDTO.getNickname());
+            updatedUser.setState(StateEnum.valueOf(updateUserDTO.getState().name()));
+
+            userRepository.save(updatedUser);
+
+            // Update using Setters (if values are allowed to be updated)
+            // if (permissionInfoDTO.getName() != null) { // Check if name update is allowed
+            // throw new IllegalArgumentException("Name cannot be updated"); // Since name
+            // is updatable=false
+            // }
+            // permissionEntity.setState(StateEnum.valueOf(permissionInfoDTO.getState().name()));
+            String userInfo = updatedUser.getName() + " " + updatedUser.getSurname();
+            String responseString = "El usuario : " + userInfo + ". ha sido Modificado";
+
+            return responseString;
+        } else {
+            throw new IllegalArgumentException("No se pudo moficar el Usuario");
+        }
+
     }
 
     @Override
     public String deleteUser(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteUser'");
+        
+        Optional<UserEntity> deleteUserEntity = userRepository.findById(id);        
+
+        if (deleteUserEntity.isPresent()) {
+
+            UserEntity entityToDelete = deleteUserEntity.get();            
+            String userInfo = entityToDelete.getName() + " " + entityToDelete.getSurname();
+            String responseString = "El usuario : " + userInfo + ". ha sido Modificado";
+
+            this.userRepository.delete(entityToDelete);
+
+
+            return "El usuario " + responseString + ". ha sido borrado.";
+
+        } else {
+
+            return "No se encontro el usuario que deseas borrar.";
+            
+        }
+
     }
-
-
-
-    
 
 }
