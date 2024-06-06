@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.app.baseone.security.presentation.dto.PermissionInfoDTO;
 import com.app.baseone.users.business.service.interfaces.IUserRequestService;
+import com.app.baseone.users.business.service.interfaces.IUserService;
+import com.app.baseone.users.presentation.dto.SaveUserDTO;
 import com.app.baseone.users.presentation.dto.UserInfoDTO;
 import com.app.baseone.utilities.enums.DocTypeEnum;
 import com.app.baseone.utilities.enums.GenderEnum;
@@ -35,6 +37,9 @@ public class UserController {
 
     @Autowired
     private IUserRequestService userRequestService;
+
+    @Autowired
+    private IUserService userService;
 
     // find all
     @GetMapping("/verInfo")
@@ -173,5 +178,28 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
     }
+
+    // create user
+    @PostMapping("/crear")
+    @PreAuthorize("hasAuthority('CREAR')")
+    public ResponseEntity<SaveUserDTO> save(@RequestBody SaveUserDTO saveUserDTO) {
+
+        return new ResponseEntity<>(this.userService.saveUser(saveUserDTO), HttpStatus.CREATED);
+
+    }
+
+    // @PutMapping("/actualizar/{id}")
+    // @PreAuthorize("hasAuthority('UPDATE')")
+    // public ResponseEntity<UserDTO> update(@RequestBody UserDTO userDTO, @PathVariable Long id) {
+
+    //     return new ResponseEntity<>(this.userService.update(id, userDTO), HttpStatus.OK);
+
+    // }
+
+    // @DeleteMapping("/borrar/{id}")
+    // @PreAuthorize("hasAuthority('DELETE')")
+    // public ResponseEntity<String> delete(@PathVariable Long id) {
+    //     return new ResponseEntity<>(this.userService.delete(id), HttpStatus.NO_CONTENT);
+    // }
 
 }

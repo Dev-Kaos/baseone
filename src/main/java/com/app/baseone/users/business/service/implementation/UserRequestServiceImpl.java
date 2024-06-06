@@ -23,16 +23,16 @@ public class UserRequestServiceImpl implements IUserRequestService {
 
     @Autowired
     private IUserRepository userRepository;
+
+    ModelMapper modelMapper = new ModelMapper();
+
     @Override
     public List<UserInfoDTO> verUserInfo() {
-        
-        ModelMapper modelMapper = new ModelMapper();
 
         return this.userRepository.findAll()
                 .stream()
                 .map(entity -> modelMapper.map(entity, UserInfoDTO.class))
                 .collect(Collectors.toList());
-
 
     }
 
@@ -42,7 +42,6 @@ public class UserRequestServiceImpl implements IUserRequestService {
         Optional<UserEntity> userEntity = this.userRepository.findById(id);
 
         if (userEntity.isPresent()) {
-            ModelMapper modelMapper = new ModelMapper();
 
             UserEntity currentUser = userEntity.get();
 
@@ -53,13 +52,11 @@ public class UserRequestServiceImpl implements IUserRequestService {
             return new UserInfoDTO();
 
         }
-        
+
     }
 
     @Override
     public List<UserInfoDTO> verUserInfoByNameContaining(String name) {
-
-        ModelMapper modelMapper = new ModelMapper();
 
         return this.userRepository.findByNameContaining(name)
                 .stream()
@@ -71,8 +68,6 @@ public class UserRequestServiceImpl implements IUserRequestService {
 
     @Override
     public List<UserInfoDTO> verUserInfoBySurnameContaining(String surname) {
-        
-        ModelMapper modelMapper = new ModelMapper();
 
         return this.userRepository.findBySurnameContaining(surname)
                 .stream()
@@ -84,21 +79,17 @@ public class UserRequestServiceImpl implements IUserRequestService {
 
     @Override
     public List<UserInfoDTO> verUserInfoByDocType(DocTypeEnum docType) {
-        
-        ModelMapper modelMapper = new ModelMapper();
 
         return this.userRepository.findByDocType(docType)
                 .stream()
                 // .filter(permission -> permission.getName().contains(name))
                 .map(entity -> modelMapper.map(entity, UserInfoDTO.class))
                 .collect(Collectors.toList());
-        
+
     }
 
     @Override
     public List<UserInfoDTO> verUserInfoByDocNumberContaining(String docNumber) {
-        
-        ModelMapper modelMapper = new ModelMapper();
 
         return this.userRepository.findByDocNumberContaining(docNumber)
                 .stream()
@@ -109,8 +100,6 @@ public class UserRequestServiceImpl implements IUserRequestService {
 
     @Override
     public List<UserInfoDTO> verUserInfoByEmailContaining(String email) {
-        
-        ModelMapper modelMapper = new ModelMapper();
 
         return this.userRepository.findByEmailContaining(email)
                 .stream()
@@ -122,8 +111,6 @@ public class UserRequestServiceImpl implements IUserRequestService {
 
     @Override
     public List<UserInfoDTO> verUserInfoByPhoneContaining(String phone) {
-        
-        ModelMapper modelMapper = new ModelMapper();
 
         return this.userRepository.findByPhoneContaining(phone)
                 .stream()
@@ -135,8 +122,6 @@ public class UserRequestServiceImpl implements IUserRequestService {
 
     @Override
     public List<UserInfoDTO> verUserInfoByGender(GenderEnum gender) {
-        
-        ModelMapper modelMapper = new ModelMapper();
 
         return this.userRepository.findByGender(gender)
                 .stream()
@@ -148,8 +133,6 @@ public class UserRequestServiceImpl implements IUserRequestService {
 
     @Override
     public List<UserInfoDTO> verUserInfoByNicknameContaining(String nickname) {
-        
-        ModelMapper modelMapper = new ModelMapper();
 
         return this.userRepository.findByNicknameContaining(nickname)
                 .stream()
@@ -161,8 +144,6 @@ public class UserRequestServiceImpl implements IUserRequestService {
 
     @Override
     public List<UserInfoDTO> verUserInfoByState(StateEnum state) {
-        
-        ModelMapper modelMapper = new ModelMapper();
 
         return this.userRepository.findByState(state)
                 .stream()
@@ -171,7 +152,5 @@ public class UserRequestServiceImpl implements IUserRequestService {
                 .collect(Collectors.toList());
 
     }
-
-
 
 }

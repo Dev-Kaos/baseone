@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.app.baseone.security.domain.entity.RoleEntity;
 import com.app.baseone.users.domain.entity.UserEntity;
 import com.app.baseone.utilities.enums.DocTypeEnum;
 import com.app.baseone.utilities.enums.GenderEnum;
