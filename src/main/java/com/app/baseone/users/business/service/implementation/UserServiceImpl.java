@@ -59,16 +59,15 @@ public class UserServiceImpl implements IUserService {
             // String strDate = "2024-05-24"; // String representation of date
             // DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE; // ISO-8601 date
             // format
-
-            // // Parse the String into a LocalDate object
+            // Parse the String into a LocalDate object
             // LocalDate localDate = LocalDate.parse(strDate, formatter);
 
+            // method
             String strDate = saveUserDTO.getBirthDate();
             DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE;
             LocalDate localDate = LocalDate.parse(strDate, formatter);
 
-            UserEntity savedUser = new UserEntity();
-            UserBasicAuthEntity savedUserAuth = new UserBasicAuthEntity();
+            UserEntity userToSave = new UserEntity();
 
             String rol = saveUserDTO.getRol();
             List<RoleEntity> roles = roleRepository.findByNameContaining(RoleEnum.valueOf(rol));
@@ -76,37 +75,79 @@ public class UserServiceImpl implements IUserService {
             Set<RoleEntity> rolesSet = new HashSet<>();
             rolesSet.addAll(roles);
 
-            savedUser.setName(saveUserDTO.getName());
-            savedUser.setSurname(saveUserDTO.getSurname());
-            savedUser.setDocType(DocTypeEnum.valueOf(saveUserDTO.getDocType().name()));
-            savedUser.setDocNumber(saveUserDTO.getDocNumber());
-            savedUser.setBirthDate(localDate);
-            savedUser.setEmail(saveUserDTO.getEmail());
-            savedUser.setPhone(saveUserDTO.getPhone());
-            savedUser.setGender(GenderEnum.valueOf(saveUserDTO.getGender().name()));
-            savedUser.setProfileImage(saveUserDTO.getProfileImage());
-            savedUser.setNickname(saveUserDTO.getNickname());
-            savedUser.setState(StateEnum.ACTIVO);
-            savedUserAuth.setUsername(saveUserDTO.getUsername());
-            savedUserAuth.setPassword(saveUserDTO.getPassword());
-            savedUserAuth.setEnabled(true);
-            savedUserAuth.setAccountNoExpired(true);
-            savedUserAuth.setAccountNoLocked(true);
-            savedUserAuth.setCredentialNoExpired(true);
-            savedUserAuth.setRoles(rolesSet);
+            userToSave.setName(saveUserDTO.getName());
+            userToSave.setSurname(saveUserDTO.getSurname());
+            userToSave.setDocType(DocTypeEnum.valueOf(saveUserDTO.getDocType().name()));
+            userToSave.setDocNumber(saveUserDTO.getDocNumber());
+            userToSave.setBirthDate(localDate);
+            userToSave.setEmail(saveUserDTO.getEmail());
+            userToSave.setPhone(saveUserDTO.getPhone());
+            userToSave.setGender(GenderEnum.valueOf(saveUserDTO.getGender().name()));
+            userToSave.setProfileImage(saveUserDTO.getProfileImage());
+            userToSave.setNickname(saveUserDTO.getNickname());
+            userToSave.setState(StateEnum.ACTIVO);
+            userToSave.setUsername(saveUserDTO.getUsername());
+            userToSave.setPassword(saveUserDTO.getPassword());
+            userToSave.setEnabled(true);
+            userToSave.setAccountNoExpired(true);
+            userToSave.setAccountNoLocked(true);
+            userToSave.setCredentialNoExpired(true);
+            userToSave.setRoles(rolesSet);
 
-            savedUser.setUserAuth(savedUserAuth);
-            savedUserAuth.setUser(savedUser);
-            userRepository.save(savedUser);
+            userRepository.save(userToSave);
 
             SaveUserRequestDTO responseDTO = new SaveUserRequestDTO();
-            responseDTO.setName(savedUser.getName());
-            responseDTO.setSurname(savedUser.getSurname());
+            responseDTO.setName(userToSave.getName());
+            responseDTO.setSurname(userToSave.getSurname());
             responseDTO.setRol(rol);
 
             modelMapper.map(responseDTO, SaveUserDTO.class);
 
             return responseDTO;
+            // method
+            // String strDate = saveUserDTO.getBirthDate();
+            // DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE;
+            // LocalDate localDate = LocalDate.parse(strDate, formatter);
+
+            // UserEntity savedUser = new UserEntity();
+            // UserBasicAuthEntity savedUserAuth = new UserBasicAuthEntity();
+
+            // String rol = saveUserDTO.getRol();
+            // List<RoleEntity> roles =
+            // roleRepository.findByNameContaining(RoleEnum.valueOf(rol));
+
+            // Set<RoleEntity> rolesSet = new HashSet<>();
+            // rolesSet.addAll(roles);
+
+            // savedUser.setName(saveUserDTO.getName());
+            // savedUser.setSurname(saveUserDTO.getSurname());
+            // savedUser.setDocType(DocTypeEnum.valueOf(saveUserDTO.getDocType().name()));
+            // savedUser.setDocNumber(saveUserDTO.getDocNumber());
+            // savedUser.setBirthDate(localDate);
+            // savedUser.setEmail(saveUserDTO.getEmail());
+            // savedUser.setPhone(saveUserDTO.getPhone());
+            // savedUser.setGender(GenderEnum.valueOf(saveUserDTO.getGender().name()));
+            // savedUser.setProfileImage(saveUserDTO.getProfileImage());
+            // savedUser.setNickname(saveUserDTO.getNickname());
+            // savedUser.setState(StateEnum.ACTIVO);
+            // savedUserAuth.setUsername(saveUserDTO.getUsername());
+            // savedUserAuth.setPassword(saveUserDTO.getPassword());
+            // savedUserAuth.setEnabled(true);
+            // savedUserAuth.setAccountNoExpired(true);
+            // savedUserAuth.setAccountNoLocked(true);
+            // savedUserAuth.setCredentialNoExpired(true);
+            // savedUserAuth.setRoles(rolesSet);
+
+            // savedUser.setUserAuth(savedUserAuth);
+            // savedUserAuth.setUser(savedUser);
+            // userRepository.save(savedUser);
+
+            // SaveUserRequestDTO responseDTO = new SaveUserRequestDTO();
+            // responseDTO.setName(savedUser.getName());
+            // responseDTO.setSurname(savedUser.getSurname());
+            // responseDTO.setRol(rol);
+
+            // modelMapper.map(responseDTO, SaveUserDTO.class);
 
         } catch (Exception e) {
 
@@ -160,24 +201,22 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public String deleteUser(Long id) {
-        
-        Optional<UserEntity> deleteUserEntity = userRepository.findById(id);        
+
+        Optional<UserEntity> deleteUserEntity = userRepository.findById(id);
 
         if (deleteUserEntity.isPresent()) {
 
-            UserEntity entityToDelete = deleteUserEntity.get();            
-            String userInfo = entityToDelete.getName() + " " + entityToDelete.getSurname();
-            String responseString = "El usuario : " + userInfo + ". ha sido Modificado";
+            UserEntity entityToDelete = deleteUserEntity.get();
+            
 
             this.userRepository.delete(entityToDelete);
 
-
-            return "El usuario " + responseString + ". ha sido borrado.";
+            return "El usuario ha sido borrado.";
 
         } else {
 
             return "No se encontro el usuario que deseas borrar.";
-            
+
         }
 
     }

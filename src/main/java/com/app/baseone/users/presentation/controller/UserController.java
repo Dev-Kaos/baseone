@@ -184,7 +184,7 @@ public class UserController {
     // create user
     @PostMapping("/crear")
     @PreAuthorize("hasAuthority('CREAR')")
-    public ResponseEntity<SaveUserRequestDTO> save(@RequestBody SaveUserDTO saveUserDTO) {
+    public ResponseEntity<SaveUserRequestDTO> saveUser(@RequestBody SaveUserDTO saveUserDTO) {
 
         return new ResponseEntity<>(this.userService.saveUser(saveUserDTO), HttpStatus.CREATED);
 
@@ -192,17 +192,17 @@ public class UserController {
 
     @PutMapping("/actualizar/{id}")
     @PreAuthorize("hasAuthority('ACTUALIZAR')")
-    public ResponseEntity<String> update(@RequestBody UpdateUserDTO updateUserDTO, @PathVariable Long id) {
+    public ResponseEntity<String> updateUser(@RequestBody UpdateUserDTO updateUserDTO, @PathVariable Long id) {
 
         return new ResponseEntity<>(this.userService.updateUser(id, updateUserDTO), HttpStatus.OK);
 
     }
 
-    // @DeleteMapping("/borrar/{id}")
-    // @PreAuthorize("hasAuthority('DELETE')")
-    // public ResponseEntity<String> delete(@PathVariable Long id) {
-    // return new ResponseEntity<>(this.userService.delete(id),
-    // HttpStatus.NO_CONTENT);
-    // }
+    @DeleteMapping("/eliminar/{id}")
+    @PreAuthorize("hasAuthority('BORRAR')")
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+        return new ResponseEntity<>(this.userService.deleteUser(id),
+                HttpStatus.OK);
+    }
 
 }

@@ -2,18 +2,16 @@ package com.app.baseone.users.domain.entity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.ColumnResult;
-import jakarta.persistence.ConstructorResult;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.NamedNativeQuery;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.PrimaryKeyJoinColumn;
-import jakarta.persistence.SqlResultSetMapping;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,8 +20,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
-import com.app.baseone.security.domain.entity.UserBasicAuthEntity;
+import com.app.baseone.security.domain.entity.RoleEntity;
 import com.app.baseone.utilities.enums.DocTypeEnum;
 import com.app.baseone.utilities.enums.GenderEnum;
 import com.app.baseone.utilities.enums.StateEnum;
@@ -82,9 +82,29 @@ public class UserEntity {
     @Column(name = "state")
     private StateEnum state;
 
-    // @JsonManagedReference
-    @OneToOne(mappedBy = "user", cascade = CascadeType.PERSIST)
-    @PrimaryKeyJoinColumn
-    private UserBasicAuthEntity userAuth;
+    // TODO: Security
+
+    @Column(name = "username", unique = true)
+    private String username;
+
+    @Column(name = "password")
+    private String password;
+
+    @Column(name = "is_enabled")
+    private boolean isEnabled;
+
+    @Column(name = "account_no_expired")
+    private boolean accountNoExpired;
+
+    @Column(name = "account_no_locked")
+    private boolean accountNoLocked;
+
+    @Column(name = "credential_no_expired")
+    private boolean credentialNoExpired;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<RoleEntity> roles = new HashSet<>();
+    
 
 }

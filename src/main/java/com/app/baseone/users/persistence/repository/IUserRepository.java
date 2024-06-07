@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import com.app.baseone.security.domain.entity.UserBasicAuthEntity;
 import com.app.baseone.users.domain.entity.UserEntity;
 import com.app.baseone.utilities.enums.DocTypeEnum;
 import com.app.baseone.utilities.enums.GenderEnum;
@@ -15,6 +16,8 @@ import com.app.baseone.utilities.enums.StateEnum;
 @Repository
 public interface IUserRepository extends JpaRepository<UserEntity, Long> {
 
+    Optional<UserEntity> findByUsername(String username);
+    
     Optional<UserEntity> findById(Long id);
 
     List<UserEntity> findByNameContaining(String name);

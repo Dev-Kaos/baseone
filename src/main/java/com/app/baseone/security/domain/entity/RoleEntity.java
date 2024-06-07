@@ -49,7 +49,7 @@ public class RoleEntity {
     private StateEnum state;
 
     // Para el Basic Security el FetchType SIEMPRE debe ser EAGER
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JoinTable(name = "role_permissions", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "permission_id"))
     private Set<PermissionEntity> permissionList = new HashSet<>();
 
